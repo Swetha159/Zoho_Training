@@ -1,12 +1,18 @@
 package com.zoho.training.stringbuilder.runner;
+import java.io.IOException;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.zoho.training.basicprogramming.runner.BasicProgrammingRunner;
 import com.zoho.training.exceptions.TaskException;
 import com.zoho.training.stringbuilder.task.StringBuilderTask;
 import com.zoho.training.utility.Util;
 
 public class StringBuilderRunner
 {
+	private static final Logger logger = Logger.getLogger(StringBuilderRunner.class.getName());
 	public static void main(String args[]) 
 	{
 		Scanner scan = new Scanner(System.in);
@@ -15,8 +21,22 @@ public class StringBuilderRunner
 		StringBuilder stringBuilder;
 		String inputString ,substring,delimiter;
 		String[] stringArray;
-    		try
+    	try
 		{
+    		 FileHandler infoHandler = new FileHandler("info.log", true);
+		        FileHandler severeHandler = new FileHandler("error.log", true);
+		        FileHandler fineHandler = new FileHandler("fine.log", true);
+		       
+		        severeHandler.setFilter(record -> record.getLevel() == Level.SEVERE);
+
+		        fineHandler.setFilter(record -> record.getLevel() == Level.FINE);
+		        
+		        infoHandler.setFilter(record -> record.getLevel() == Level.INFO);
+		        logger.setLevel(Level.FINE);
+		        logger.addHandler(infoHandler);
+		        logger.addHandler(severeHandler);
+		        logger.addHandler(fineHandler);
+				logger.setUseParentHandlers(false);
 			while(choice!=11)
 			{
 				System.out.println("Choose from the options below:\n1.Create StringBuilder with and without string \n2.Add strings in stringbuilder\n3.Insert string \n 4.delete first string \n5.Replace delimiter\n6.reverse the string\n7.delete substring with specified index\n8.replace substring with specified index\n9.find first index of substring\n10.find last index of substring\n11.Exit ");
@@ -26,7 +46,7 @@ public class StringBuilderRunner
 					{
 						case 1:
 							stringBuilder = task.getStringBuilder();
-							System.out.println("StringBuilder is created without string");
+							logger.info("StringBuilder is created without string");
 							printLengthAndString(stringBuilder);
 							System.out.println("Enter the string to add:");
 							scan.nextLine();
@@ -209,7 +229,7 @@ public class StringBuilderRunner
 							printLengthAndString(stringBuilder);
 							System.out.println("Enter the character to search");
 							substring= scan.next();
-							System.out.println("The first index of "+substring+"is"+task.findIndex(stringBuilder , substring ));
+							logger.fine("The first index of "+substring+"is"+task.findIndex(stringBuilder , substring ));
 							break;
 						case 10 :
 							System.out.print("Enter the no. of strings to append:");
@@ -233,7 +253,7 @@ public class StringBuilderRunner
 							System.out.println("Enter the substring to search :");
 							substring  = scan.next();
 							
-							System.out.println("The last index of "+substring+" is"+task.findIndex(stringBuilder , substring ));
+							logger.info("The last index of "+substring+" is"+task.findIndex(stringBuilder , substring ));
 							break;
 
 						default:
@@ -244,9 +264,9 @@ public class StringBuilderRunner
 			
 		}
 		}
-		catch(TaskException e)
+		catch(TaskException | IOException |SecurityException e)
 		{
-				System.out.println(e.getMessage());
+				logger.severe(e.getMessage());
 		}
 		finally
 		{
@@ -255,8 +275,8 @@ public class StringBuilderRunner
 	}
 	public static void printLengthAndString( StringBuilder stringBuilder) throws TaskException
 	{
-		System.out.println("The length of the StringBuilder is "+Util.findLength(stringBuilder));
-		System.out.println("The string is "+stringBuilder.toString());	
+		logger.info("The length of the StringBuilder is "+Util.findLength(stringBuilder));
+		logger.info("The string is "+stringBuilder.toString());	
 	}
 
 

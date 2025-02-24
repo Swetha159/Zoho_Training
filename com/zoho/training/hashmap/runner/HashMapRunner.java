@@ -1,8 +1,13 @@
 package com.zoho.training.hashmap.runner;
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.zoho.training.basicprogramming.runner.BasicProgrammingRunner;
 import com.zoho.training.birds.HMBird;
 import com.zoho.training.exceptions.TaskException;
 import com.zoho.training.hashmap.task.HashMapTask;
@@ -10,6 +15,8 @@ import com.zoho.training.utility.Util;
 
 public class HashMapRunner
 {
+	private static final Logger logger = Logger.getLogger(HashMapRunner.class.getName());
+	
  	public static void main(String args[]) 
 	{
 		Scanner scan = new Scanner(System.in);
@@ -17,6 +24,22 @@ public class HashMapRunner
 		{
 			HashMapTask task = new HashMapTask();
 			HashMapRunner runner = new HashMapRunner(); 
+			
+			  FileHandler infoHandler = new FileHandler("info.log", true);
+		        FileHandler severeHandler = new FileHandler("error.log", true);
+		        FileHandler fineHandler = new FileHandler("fine.log", true);
+		       
+		        severeHandler.setFilter(record -> record.getLevel() == Level.SEVERE);
+
+		        fineHandler.setFilter(record -> record.getLevel() == Level.FINE);
+		        
+		        infoHandler.setFilter(record -> record.getLevel() == Level.INFO);
+		        logger.setLevel(Level.FINE);
+		        logger.addHandler(infoHandler);
+		        logger.addHandler(severeHandler);
+		        logger.addHandler(fineHandler);
+				logger.setUseParentHandlers(false);
+				
 			int choice=0;
 			while(choice!=20)
 			{
@@ -150,11 +173,11 @@ public class HashMapRunner
 						stringKey = scan.next();
 						if(task.keyExists(stringIntMap,stringKey))
 						{
-							System.out.println("The key "+stringKey + " is present");
+							logger.info("The key "+stringKey + " is present");
 						}
 						else
 						{
-							System.out.println("The key "+stringKey + " is  not present");
+							logger.info("The key "+stringKey + " is  not present");
 						}
 						break;
 					case 9 : 
@@ -175,11 +198,11 @@ public class HashMapRunner
 						Integer integerKey = scan.nextInt();
 						if(task.valueExists(stringIntMap,integerKey))
 						{
-							System.out.println("The value "+ integerKey + " is present");
+							logger.info("The value "+ integerKey + " is present");
 						}
 						else
 						{
-							System.out.println("The value "+ integerKey + " is  not present");
+							logger.info("The value "+ integerKey + " is  not present");
 						}
 						break;
 					case 10 : 
@@ -196,7 +219,7 @@ public class HashMapRunner
 							stringValue = (stringValue.equals("yes")) ? null : stringValue;
 							task.addKeyAndValue(stringStringMap,stringKey,stringValue);
 						}
-						System.out.println("Before Changing Value");
+						logger.info("Before Changing Value");
 						runner.printMapAndSize(stringStringMap);
 						for(String string : task.getKeySet(stringStringMap))
 						{
@@ -205,7 +228,7 @@ public class HashMapRunner
 							stringValue = (stringValue.equals("yes")) ? null : stringValue;
 							task.addKeyAndValue(stringStringMap,string,stringValue);
 						}
-						System.out.println("After Changing Value");
+						logger.info("After Changing Value");
 						runner.printMapAndSize(stringStringMap);
 						break;
 					case 11 : 
@@ -224,7 +247,7 @@ public class HashMapRunner
 						}
 						System.out.println("Enter the key to find value :");
 						stringKey = scan.next();
-						System.out.println("The Value for the key is "+task.getValue(stringIntMap,stringKey));
+						logger.info("The Value for the key is "+task.getValue(stringIntMap,stringKey));
 						break;
 					case 12 :
 						stringIntMap = task.getMap();
@@ -240,14 +263,14 @@ public class HashMapRunner
 							intValue = (intValue == -1) ? null : intValue;
 							task.addKeyAndValue(stringIntMap,stringKey,intValue);
 						}
-						System.out.println("Before returning value from non - existing key ");
+						logger.info("Before returning value from non - existing key ");
 						runner.printMapAndSize(stringIntMap);
 						System.out.println("Enter the key to find value :");
 						stringKey = scan.next();
 						System.out.println("Enter the default value :");
 						Integer  defaultValue = scan.nextInt();
-						System.out.println("The Value for the key is "+task.getValueOrDefaultValue(stringIntMap,stringKey,defaultValue));
-						System.out.println("After returning value from non - existing key ");
+						logger.info("The Value for the key is "+task.getValueOrDefaultValue(stringIntMap,stringKey,defaultValue));
+						logger.info("After returning value from non - existing key ");
 						runner.printMapAndSize(stringIntMap);
 						break;
 					case 13 : 
@@ -264,12 +287,12 @@ public class HashMapRunner
 							intValue = (intValue == -1) ? null : intValue;
 							task.addKeyAndValue(stringIntMap,stringKey,intValue);
 						}
-						System.out.println("Before removing key ");
+						logger.info("Before removing key ");
 						runner.printMapAndSize(stringIntMap);
 						System.out.println("Enter the key to remove :");
 						stringKey = scan.next();
 						task.removeKey(stringIntMap,stringKey);
-						System.out.println("After removing key ");
+						logger.info("After removing key ");
 						runner.printMapAndSize(stringIntMap);
 						break;
 					case 14 :
@@ -286,14 +309,14 @@ public class HashMapRunner
 							intValue = (intValue == -1) ? null : intValue;
 							task.addKeyAndValue(stringIntMap,stringKey,intValue);
 						}
-						System.out.println("Before removing key ");
+						logger.info("Before removing key ");
 						runner.printMapAndSize(stringIntMap);
 						System.out.println("Enter the key to remove :");
 						stringKey = scan.next();
 						System.out.println("Enter the value to check :");
 						intValue = scan.nextInt();
 						task.removeKeyIfValueMatches(stringIntMap,stringKey,intValue);
-						System.out.println("After removing key ");
+						logger.info("After removing key ");
 						runner.printMapAndSize(stringIntMap);
 						break;
 					case 15 :
@@ -310,14 +333,14 @@ public class HashMapRunner
 							stringValue = (stringValue.equals("yes")) ? null : stringValue;
 							task.addKeyAndValue(stringStringMap,stringKey,stringValue);
 						}
-						System.out.println("Before Replacing Value");
+						logger.info("Before Replacing Value");
 						runner.printMapAndSize(stringStringMap);
 						System.out.println("Enter the key:");
 						stringKey = scan.next();
 						System.out.println("Enter the new value:");
 						stringValue = scan.next();
 						task.replaceValue(stringStringMap,stringKey,stringValue);
-						System.out.println("After Replacing Value");
+						logger.info("After Replacing Value");
 						runner.printMapAndSize(stringStringMap);
 						break;
 					case 16 : 
@@ -334,7 +357,7 @@ public class HashMapRunner
 							stringValue = (stringValue.equals("yes")) ? null : stringValue;
 							task.addKeyAndValue(stringStringMap,stringKey,stringValue);
 						}
-						System.out.println("Before Replacing Value");
+						logger.info("Before Replacing Value");
 						runner.printMapAndSize(stringStringMap);
 						System.out.println("Enter the key:");
 						stringKey = scan.next();
@@ -343,7 +366,7 @@ public class HashMapRunner
 						System.out.println("Enter the  new value:");
 						String newValue = scan.next();
 						task.replaceValueIfValueMatches(stringStringMap,stringKey,stringValue,newValue);
-						System.out.println("After Replacing Value");
+						logger.info("After Replacing Value");
 						runner.printMapAndSize(stringStringMap);
 						break;
 					case 17 : 
@@ -373,11 +396,11 @@ public class HashMapRunner
 							intValue = (intValue == -1) ? null : intValue;
 							task.addKeyAndValue(secondStringIntMap,stringKey,intValue);
 						}
-						System.out.println("Before Change ");
+						logger.info("Before Change ");
 						runner.printMapAndSize(firstStringIntMap);
 						runner.printMapAndSize(secondStringIntMap);
 						task.addMap(firstStringIntMap,secondStringIntMap);
-						System.out.println("After Change ");
+						logger.info("After Change ");
 						runner.printMapAndSize(firstStringIntMap);
 						runner.printMapAndSize(secondStringIntMap);
 						break;
@@ -397,7 +420,7 @@ public class HashMapRunner
 						}
 						for (Map.Entry<String, String> entry : task.getEntrySet(stringStringMap))
 						{
-							System.out.println("Key :"+task.getKeyFromEntry(entry)+ " Value :"+task.getValueFromEntry(entry));
+							logger.fine("Key :"+task.getKeyFromEntry(entry)+ " Value :"+task.getValueFromEntry(entry));
 						}
 						break;
 					case 19 :
@@ -414,14 +437,14 @@ public class HashMapRunner
 							stringValue = (stringValue.equals("yes")) ? null : stringValue;
 							task.addKeyAndValue(stringStringMap,stringKey,stringValue);
 						}
-						System.out.println("Before removing all entries");
+						logger.info("Before removing all entries");
 						runner.printMapAndSize(stringStringMap);
 						task.removeAllEntries(stringStringMap);
-						System.out.println("After removing all entries");
+						logger.info("After removing all entries");
 						runner.printMapAndSize(stringStringMap);
 						break;
 					case 20 :
-						System.out.println("Exiting");
+						logger.info("Exiting");
 						break;
 					default:
 						System.out.println("Invalid Choice");
@@ -432,14 +455,18 @@ public class HashMapRunner
 				}
 				catch(InputMismatchException e)
 				{
-					System.out.println("Invalid input");
+					logger.severe("Invalid input");
                 			scan.nextLine(); 
 				}
 				catch(TaskException e)
 				{
-					System.out.println(e.getMessage());
+					logger.severe(e.getMessage());
 				}
 			}
+		}
+		catch(IOException |SecurityException e)
+		{
+			logger.severe(e.getMessage());
 		}
 		finally
 		{
@@ -448,8 +475,8 @@ public class HashMapRunner
 	}
 	public void printMapAndSize(Map map) throws TaskException
 	{
-		System.out.println(map); 
-		System.out.println("The size of the hashmap is "+Util.findLength(map));
+		logger.info(map.toString()); 
+		logger.info("The size of the hashmap is "+Util.findLength(map));
 	}
 	
 	

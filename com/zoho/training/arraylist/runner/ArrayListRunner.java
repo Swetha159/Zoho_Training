@@ -1,24 +1,45 @@
 package com.zoho.training.arraylist.runner;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.zoho.training.arraylist.task.ArrayListTask;
+import com.zoho.training.basicprogramming.runner.BasicProgrammingRunner;
 import com.zoho.training.birds.ALBird;
 import com.zoho.training.exceptions.TaskException;
 import com.zoho.training.utility.Util;
 
 public class ArrayListRunner
 {
+	private static final Logger logger = Logger.getLogger(BasicProgrammingRunner.class.getName());
+	
 	public static void main(String args[])
 	{
         	Scanner scan = new Scanner(System.in);
 		try{
 		ArrayListTask task = new ArrayListTask();
 		ArrayListRunner runner = new ArrayListRunner();
-	
+		
+		 FileHandler infoHandler = new FileHandler("info.log", true);
+	        FileHandler severeHandler = new FileHandler("error.log", true);
+	        FileHandler fineHandler = new FileHandler("fine.log", true);
+	       
+	        severeHandler.setFilter(record -> record.getLevel() == Level.SEVERE);
+
+	        fineHandler.setFilter(record -> record.getLevel() == Level.FINE);
+	        
+	        infoHandler.setFilter(record -> record.getLevel() == Level.INFO);
+	        logger.setLevel(Level.FINE);
+	        logger.addHandler(infoHandler);
+	        logger.addHandler(severeHandler);
+	        logger.addHandler(fineHandler);
+			logger.setUseParentHandlers(false);
 		int choice=0;
 		while(choice!=19)
 		{
@@ -33,7 +54,7 @@ public class ArrayListRunner
 				{
 					case 1 :
 						List<Integer> arrayList = task.getList();
-						System.out.println("The length of the ArrayList is "+Util.findLength(arrayList));
+						logger.info("The length of the ArrayList is "+Util.findLength(arrayList));
 						break;
 					case 2 :
 						List<String> stringList = task.getList();
@@ -118,7 +139,7 @@ public class ArrayListRunner
 						task.addObjects(stringArray, stringList);
 						System.out.println("Enter the string to find index");
 						String string = scan.next();
-						System.out.println("The index of the string is "+task.findIndex(string,stringList));
+						logger.info("The index of the string is "+task.findIndex(string,stringList));
 						runner.PrintArrayListAndSize(stringList);
 						break;
 					case 7 : 
@@ -132,12 +153,12 @@ public class ArrayListRunner
             						stringArray[i] = scan.next();    
         					}
 						task.addObjects(stringArray, stringList);
-						System.out.println("Using Iterator to print elements:");
+						logger.info("Using Iterator to print elements:");
         					Iterator<String> iterator = stringList.iterator();
         					while (iterator.hasNext()) {
             						System.out.println(iterator.next());
         					}
-        					System.out.println("\nUsing for loop to print elements:");
+        					logger.info("\nUsing for loop to print elements:");
         					for (String str : stringList) {
             						System.out.println(str);
         					}
@@ -156,7 +177,7 @@ public class ArrayListRunner
 						task.addObjects(stringArray, stringList);
 					        System.out.println("Enter the index to find the element:");
 						int index= scan.nextInt();
-						System.out.println("The element in the Arraylist at the index "+index +" is "+ 																task.findElement(index,count,stringList));
+						logger.info("The element in the Arraylist at the index "+index +" is "+ 																task.findElement(index,count,stringList));
 						runner.PrintArrayListAndSize(stringList);
 						break;
 
@@ -173,8 +194,8 @@ public class ArrayListRunner
 						task.addObjects(stringArray, stringList);
 						System.out.println("Enter the string to find its first and last index");
 						string = scan.next();
-						System.out.println("The first index of the element is at "+task.findIndex(string,stringList));
-						System.out.println("The last index of the element is at "					+task.findLastIndex(string,stringList));
+						logger.info("The first index of the element is at "+task.findIndex(string,stringList));
+						logger.fine("The last index of the element is at "					+task.findLastIndex(string,stringList));
 						break;
 					case 10 : 
 						stringList = task.getList();
@@ -182,7 +203,7 @@ public class ArrayListRunner
         					count = scan.nextInt();
         					stringArray = new String[count];
         					for (int i = 0; i < count; i++) 
-						{
+        					{
 							System.out.print("Enter the String:");
             						stringArray[i] = scan.next();    
         					}
@@ -349,10 +370,10 @@ public class ArrayListRunner
             						longArray[i] = scan.nextLong();    
         					}
 						task.addObjects(longArray, longList);
-						System.out.println("Before Deletion");
+						logger.info("Before Deletion");
 						runner.PrintArrayListAndSize(longList);
 						task.clearList(longList);
-						System.out.println("After Deletion");
+						logger.info("After Deletion");
 						runner.PrintArrayListAndSize(longList);
 						break;
 					case 18 : 
@@ -370,11 +391,11 @@ public class ArrayListRunner
 						string = scan.next();
 						if(task.checkPresenceOfElement(stringList , string))
 						{
-							System.out.println("The string is present in the ArrayList");
+							logger.info("The string is present in the ArrayList");
 						}
 						else
 						{
-							System.out.println("The string is not present in the ArrayList");
+							logger.info("The string is not present in the ArrayList");
 						}
 						runner.PrintArrayListAndSize(stringList);
 						break;
@@ -387,16 +408,20 @@ public class ArrayListRunner
 		}
 		catch (InputMismatchException e) 
 		{
-                	System.out.println("Invalid input");
+			        logger.severe("Invalid input");
                 	scan.nextLine();
                 	
         }
 		catch(TaskException e)
 		{
-			System.out.println(e.getMessage());
+			logger.severe(e.getMessage());
 			scan.nextLine();
 		}
 	}
+	}
+	catch(IOException |SecurityException e)
+	{
+		logger.severe(e.getMessage());
 	}
 	finally
 	{
@@ -407,8 +432,8 @@ public class ArrayListRunner
 	
 	public void PrintArrayListAndSize(List arrayList) throws TaskException
 	{
-		System.out.println(arrayList.toString());
-		System.out.println("The length of the ArrayList is "+Util.findLength(arrayList));
+		logger.info(arrayList.toString());
+		logger.info("The length of the ArrayList is "+Util.findLength(arrayList));
 	}
 	
 

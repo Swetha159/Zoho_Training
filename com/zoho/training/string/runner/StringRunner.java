@@ -1,15 +1,20 @@
 package com.zoho.training.string.runner;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.zoho.training.exceptions.TaskException;
+import com.zoho.training.hashmap.runner.HashMapRunner;
 import com.zoho.training.string.task.StringTask;
 import com.zoho.training.utility.Util;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 public class StringRunner
 {
-	
+	private static final Logger logger = Logger.getLogger(StringRunner.class.getName());
 	public  static void function() throws TaskException  {
 	//Scanner scan = new Scanner(System.in);
 	try{
@@ -77,19 +82,32 @@ public class StringRunner
 	        {
 			 //Scanner scan = new Scanner(System.in);
 			choice = scan.nextInt();
+			FileHandler infoHandler = new FileHandler("info.log", true);
+	        FileHandler severeHandler = new FileHandler("error.log", true);
+	        FileHandler fineHandler = new FileHandler("fine.log", true);
+	       
+	        severeHandler.setFilter(record -> record.getLevel() == Level.SEVERE);
 
+	        fineHandler.setFilter(record -> record.getLevel() == Level.FINE);
+	        
+	        infoHandler.setFilter(record -> record.getLevel() == Level.INFO);
+	        logger.setLevel(Level.FINE);
+	        logger.addHandler(infoHandler);
+	        logger.addHandler(severeHandler);
+	        logger.addHandler(fineHandler);
+			logger.setUseParentHandlers(false);
 			switch(choice)
 			{
 				case 1:
 					int stringLength = Util.findLength(args[0]);
-					System.out.println("The length of the string \""+args[0]+"\" is " + stringLength);
+					logger.info("The length of the string \""+args[0]+"\" is " + stringLength);
 					break;
 		
 				case 2 :// Char Array Conversion
 					System.out.print("Enter a String to convert into char Array :");
 					inputString = scan.next();
 					char[] charArray = task.convertToCharArray(inputString);
-					System.out.println(Arrays.toString(charArray));
+					logger.info(Arrays.toString(charArray));
 					break;
 		
 				case 3 : //penultimate
@@ -97,7 +115,7 @@ public class StringRunner
 					inputString = scan.next();
 					System.out.print("Enter the position value form last  :");
 					int positionFromLast = scan.nextInt();
-					System.out.println("The Character is " + task.findPositionValue(inputString,positionFromLast)); 
+					logger.info("The Character is " + task.findPositionValue(inputString,positionFromLast)); 
 					break;
 				case 4: // number of occurences
 					System.out.print("Enter a String :");
@@ -105,7 +123,7 @@ public class StringRunner
 					System.out.print("Enter a character (to find the number of occurences):");
 					character = scan.next().charAt(0); 
 					int count = task.findNumberOfOccurences(inputString ,  character );
-					System.out.println("There are "+count+ " occurences of the character \'"+character+"\' in the string \""+inputString+"\"");
+					logger.info("There are "+count+ " occurences of the character \'"+character+"\' in the string \""+inputString+"\"");
 					break;
 
 				case 5 ://greatest position
@@ -117,11 +135,11 @@ public class StringRunner
 					int index = task.findGreatestPosition(inputString,character);
 					if(index==-1)
 					{
-						System.out.println("The character is not found in the string ");
+						logger.info("The character is not found in the string ");
 					}
 					else
 					{
-						System.out.println("The Greatest Position of the character \'"+character+"\' in the string\""+inputString+ "\"is "+index);
+						logger.info("The Greatest Position of the character \'"+character+"\' in the string\""+inputString+ "\"is "+index);
 					}	
 					break;
 
@@ -138,7 +156,7 @@ public class StringRunner
 					inputString = scan.next();
 					System.out.print("Enter the number of characters  :");
 					numberOfCharacters = scan.nextInt();
-					System.out.println("The Prefix of the string \""+inputString+"\" is "+ task.findPrefix(inputString,numberOfCharacters));
+					logger.fine("The Prefix of the string \""+inputString+"\" is "+ task.findPrefix(inputString,numberOfCharacters));
 					break;
 
 				case 8: //replace prefix
@@ -149,7 +167,7 @@ public class StringRunner
 					System.out.print("Enter a Substitute String :");
 					String substitute = scan.next();
 					String replacedString = task.replacePrefix(inputString,numberOfCharacters,substitute);
-					System.out.println("After the replacement of the first " + numberOfCharacters + " characters with \""+substitute+"\" , the string will be "+replacedString); 
+					logger.info("After the replacement of the first " + numberOfCharacters + " characters with \""+substitute+"\" , the string will be "+replacedString); 
 					break;
 
 				case 9:  //startswith
@@ -159,11 +177,11 @@ public class StringRunner
 					prefix = scan.next();
 					if(task.checkStartsWith(inputString,prefix))
 					{
-						System.out.println("The String starts with \""+prefix+"\"");
+						logger.info("The String starts with \""+prefix+"\"");
 					}
 					else
 					{
-						System.out.println("The String doesn't start with \""+prefix+"\"");
+						logger.info("The String doesn't start with \""+prefix+"\"");
 					} 
 			  		break;
 			
@@ -174,11 +192,11 @@ public class StringRunner
 					suffix = scan.next();
 					if(task.checkEndsWith(inputString,suffix))
 					{
-						System.out.println("The String ends with \""+suffix+"\"");
+						logger.info("The String ends with \""+suffix+"\"");
 					}
 					else
 					{
-						System.out.println("The String doesn't end with \""+suffix+"\"");
+						logger.info("The String doesn't end with \""+suffix+"\"");
 					} 
 					break;
 
@@ -186,26 +204,26 @@ public class StringRunner
 					System.out.print("Enter a String :");
 					inputString = scan.next(); 
 					inputString = task.convertLowerCase(inputString);
-					System.out.println("Converted to lowercase:" + inputString);
+					logger.info("Converted to lowercase:" + inputString);
 					break;
 				case 12 : //uppercaseconversion
 					System.out.print("Enter a String :");
 					inputString = scan.next();
 					inputString = task.convertUpperCase(inputString);
-					System.out.println("Converted to uppercase:" + inputString); 
+					logger.info("Converted to uppercase:" + inputString); 
 					break;
 			
 				case 13: //reverse
 					System.out.print("Enter a String :");
 					inputString = scan.nextLine();
 					inputString = task.reverseString(inputString);
-					System.out.println("Reversed String is:" + inputString); 
+					logger.info("Reversed String is:" + inputString); 
 					break;
 		
 				case 14:  //multiplestrings
 					System.out.print("Enter a String :");
 					inputString = scan.nextLine();
-					System.out.println("A Line with multiple strings :"+inputString); 
+					logger.info("A Line with multiple strings :"+inputString); 
 					break;
 	
 				case 15: //concatenate
@@ -223,7 +241,7 @@ public class StringRunner
 					{
 						delimiterToConcatenate="";
 					}
-					System.out.println("Concatenated String :"+task.concatenateStrings(inputString,delimiterToSplit,delimiterToConcatenate)); 
+					logger.info("Concatenated String :"+task.concatenateStrings(inputString,delimiterToSplit,delimiterToConcatenate)); 
 					break;
 			
 				case 16:  //string array
@@ -237,7 +255,7 @@ public class StringRunner
 					}
 
 					String[] strings = task.encloseInStringArray(inputString , delimiterToSplit);
-					System.out.println(Arrays.toString(strings));
+					logger.info(Arrays.toString(strings));
 					break;
 			
 				case 17:  //merge
@@ -257,11 +275,11 @@ public class StringRunner
 					string2 = scan.next();
 					if(task.checkEqualityCaseSensitive(string1,string2))
 					{
-						System.out.println("The Strings are Equal");
+						logger.info("The Strings are Equal");
 					}
 					else
 					{
-						System.out.println("The Strings are not Equal");
+						logger.info("The Strings are not Equal");
 					}
 					break;
 				case 19:  //equal(case-insensitive)
@@ -271,32 +289,32 @@ public class StringRunner
 					string2 = scan.next();
 					if(task.checkEqualityCaseInSensitive(string1,string2))
 					{
-						System.out.println("The Strings are Equal");
+						logger.info("The Strings are Equal");
 					}
 					else
 					{
-						System.out.println("The Strings are not Equal");
+						logger.info("The Strings are not Equal");
 					} 
 					break;
                 		case 20: //leading and trailing space
 					System.out.print("Enter String :");
 					inputString = scan.nextLine();
-                        		System.out.println("The string with no leading and trailing space :"+task.removeLeadingAndTrailingSpace(inputString)+".");
+					logger.info("The string with no leading and trailing space :"+task.removeLeadingAndTrailingSpace(inputString)+".");
 					break;
 				default:
-					System.out.print("Enter Valid Choice\n");
+					System.out.println("Enter Valid Choice\n");
 				
 			}
 		}
 		 catch (InputMismatchException e) 
 		{
-                	System.out.println("Invalid input. Please enter an integer.");
+			 logger.severe("Invalid input. Please enter an integer.");
                 	scan.nextLine(); 
-                }
-	      	catch(TaskException e)
-	      	{
-			System.out.println(e.getMessage());
-	      	}
+        }
+      	catch(TaskException | IOException |SecurityException e)
+      	{
+      		logger.severe(e.getMessage());
+      	}
 		finally
 		{
 			scan.close();

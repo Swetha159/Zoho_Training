@@ -1,6 +1,10 @@
 package com.zoho.training.inheritance.runner;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import com.zoho.training.basicprogramming.runner.BasicProgrammingRunner;
 import com.zoho.training.birds.Bird;
 import com.zoho.training.birds.BirdAbstract;
 import com.zoho.training.birds.Duck;
@@ -10,16 +14,32 @@ import com.zoho.training.cars.Swift;
 import com.zoho.training.cars.Xuv;
 import com.zoho.training.vehicle.Car;
 
+import java.io.IOException;
 import java.util.InputMismatchException;
 
 public class InheritanceRunner 
 {
+	private static final Logger logger = Logger.getLogger(InheritanceRunner.class.getName());
 	public static void main(String args[])
 	{
 		Scanner scan = new Scanner(System.in);
 		InheritanceRunner runner = new InheritanceRunner();
 		try
 		{
+			FileHandler infoHandler = new FileHandler("info.log", true);
+	        FileHandler severeHandler = new FileHandler("error.log", true);
+	        FileHandler fineHandler = new FileHandler("fine.log", true);
+	       
+	        severeHandler.setFilter(record -> record.getLevel() == Level.SEVERE);
+
+	        fineHandler.setFilter(record -> record.getLevel() == Level.FINE);
+	        
+	        infoHandler.setFilter(record -> record.getLevel() == Level.INFO);
+	        logger.setLevel(Level.FINE);
+	        logger.addHandler(infoHandler);
+	        logger.addHandler(severeHandler);
+	        logger.addHandler(fineHandler);
+			logger.setUseParentHandlers(false);
 			int choice=0,seats,airbags,yearOfMake;
 			String model,color,engineNumber,type;
 			Swift swift;
@@ -48,7 +68,7 @@ public class InheritanceRunner
 							swift.setAirbags(airbags);
 							swift.setModel(model);
 							swift.setColor(color);
-							System.out.println(swift);
+							logger.info(swift.toString());
 							break;
 						case 2:
 							sCross = new SCross();
@@ -75,7 +95,7 @@ public class InheritanceRunner
 							sCross.setYearOfMake(yearOfMake);
 							sCross.setEngineNumber(engineNumber);
 							sCross.setType(type);
-							System.out.println(sCross);
+							logger.info(sCross.toString());
 							break;
 						case 3 :
 							swift = new Swift();
@@ -121,15 +141,20 @@ public class InheritanceRunner
 							duck.speak();
 							break;
 						default :
-							System.out.println("Invalid Choice");
+							logger.info("Invalid Choice");
 					}
 				}
 				catch(InputMismatchException e)
 				{
-				System.out.println("Enter valid input");
+				logger.severe("Enter valid input");
 				scan.nextLine();
 				}
+				
 			}
+		}
+		catch(IOException |SecurityException e)
+		{
+			logger.severe(e.getMessage());
 		}
 		finally
 		{
@@ -140,24 +165,24 @@ public class InheritanceRunner
 	{
         	if (car instanceof Swift) 
 		{
-        		System.out.println("Hatch");
+        		logger.info("Hatch");
         	} 
 		else if (car instanceof Xuv) 
 		{
-            		System.out.println("SUV");
+			logger.info("SUV");
         	} 
 		else if (car instanceof SCross) 
 		{
-           		 System.out.println("Sedan");
+			logger.info("Sedan");
         	} 
 		else 
 		{
-        		System.out.println("Unknown Car Type");
+			logger.info("Unknown Car Type");
        		}
         }
 	public void operateOnSwift(Swift swift) 
 	{
-        	System.out.println("Handling Swift");
+		logger.info("Handling Swift");
 	}
 		
 	
