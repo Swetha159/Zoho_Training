@@ -1,6 +1,22 @@
 package com.zoho.training.threads.task;
 
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import com.zoho.training.threads.runner.ThreadRunner;
+import com.zoho.training.utility.Util;
+
 public class ExtendedThread extends Thread {
+
+	private static final Logger logger;
+
+	static {
+		try {
+			logger = Util.getLogger(ThreadRunner.class);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to initialize logger", e);
+		}
+	}
 
 	private int sleepTime;
 	private volatile boolean running = true;
@@ -22,24 +38,20 @@ public class ExtendedThread extends Thread {
 	}
 
 	@Override
-	public void run()
-	{
-		System.out.println(this.getName());
-		System.out.println(this.getPriority());
-		System.out.println(this.getState());
+	public void run() {
+	    logger.info("Thread Name: " + this.getName());
+	    logger.info("Thread Priority: " + this.getPriority());
+	    logger.info("Thread State: " + this.getState());
 		while (running) {
-		try {
-			System.out.println("Going to Sleep"+this.getName());
-			Thread.sleep(sleepTime);
-			System.out.println("After Sleeping"+this.getName());
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		}
-		
-		System.out.println(this.getName() + " has stopped.");
+			try {
+				logger.info("Going to Sleep " + this.getName());
+				Thread.sleep(sleepTime);
+				logger.info("After Sleeping " + this.getName());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
-	
+		}
+
 	}
 }

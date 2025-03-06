@@ -1,11 +1,34 @@
 package com.zoho.training.utility;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.zoho.training.exceptions.TaskException;
 
 public class Util
 {
+	public static Logger getLogger(Class<?> className)  throws IOException{
+        Logger logger = Logger.getLogger(className.getName());
+
+        
+            FileHandler infoHandler = new FileHandler(className.getSimpleName() + "_info.log", true);
+            FileHandler severeHandler = new FileHandler(className.getSimpleName() + "_error.log", true);
+
+            severeHandler.setFilter(record -> record.getLevel() == Level.SEVERE);
+            infoHandler.setFilter(record -> record.getLevel() == Level.INFO);
+
+
+            logger.setLevel(Level.ALL);
+            logger.addHandler(infoHandler);
+            logger.addHandler(severeHandler);
+            logger.setUseParentHandlers(false);
+       
+
+        return logger;
+    }
 	public static void validateInput(Object input ,String inputName) throws TaskException
 	{
 		if(input==null)
