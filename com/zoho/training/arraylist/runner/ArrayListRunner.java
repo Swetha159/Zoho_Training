@@ -17,7 +17,7 @@ import com.zoho.training.utility.Util;
 
 public class ArrayListRunner
 {
-	private static final Logger logger = Logger.getLogger(BasicProgrammingRunner.class.getName());
+	private static final Logger logger = Logger.getLogger(ArrayListRunner.class.getName());
 	
 	public static void main(String args[])
 	{
@@ -248,6 +248,8 @@ public class ArrayListRunner
         					}
 						task.addObjects(stringArray, firstList);
 						secondList = task.getList();
+					
+					
 						System.out.println("Enter no. of strings:");
         					count = scan.nextInt();
         					stringArray = new String[count];
